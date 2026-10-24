@@ -75,6 +75,17 @@ cp -r skills/skills/clarify-to-plan ~/.agents/skills/     # Codex CLI
 
 Restart your AI tool after installing so it picks up the new skill.
 
+### Update to the latest version
+
+Run the same install command again. It overwrites the installed copy with the latest version from GitHub:
+
+```bash
+npx skills add ranjbar-dev/skills --skill clarify-to-plan -a claude-code -g
+npx skills add ranjbar-dev/skills --skill clarify-to-plan -a codex -g
+```
+
+Leave out `-g` if you installed into a project. If you installed manually, run `git pull` in your clone and copy the folder again. Then restart your AI tool, or start a new session.
+
 ---
 
 ## clarify-to-plan
@@ -86,11 +97,23 @@ AI agents often fill gaps with their own assumptions, such as a framework you di
 ### How it works
 
 1. **You give it an idea or task.**
-2. **It asks questions only**, and keeps going until the relevant details and choices are clear. There is no fixed question limit. By default it asks one focused question per turn.
+2. **It asks questions only**, and keeps going until the relevant details and choices are clear. There is no fixed question limit. By default it asks one focused question per turn. In Claude Code and Codex CLI you **select the answer** from a list of options, or pick "Other" to type your own (see [Selectable questions](#selectable-questions)).
 3. **It doesn't fill gaps with guesses or defaults.** If it proposes a choice, or you say "you choose", you must confirm that choice before it counts.
 4. **It asks:** *"Are you ready for me to write the final plan, or would you like to add or change any details first?"*
 5. **If you aren't ready**, it collects your additional details and asks follow-up questions as needed.
 6. **Once you confirm you're ready**, it gives you **one complete plan to paste into a new session**. The plan keeps your choices, exclusions and requirements.
+
+### Selectable questions
+
+When a question has a small set of distinct answers, the skill asks it through the host's built-in question tool, so you pick an option instead of typing:
+
+| Tool | Question tool | Notes |
+|------|---------------|-------|
+| Claude Code | `AskUserQuestion` | Works in every mode. Supports multi-select. |
+| Codex CLI | `request_user_input` | Works in **Plan mode** (press `Shift+Tab` to switch to it). To use it in Default mode, enable the experimental feature: `codex --enable default_mode_request_user_input`, or add `default_mode_request_user_input = true` under `[features]` in `~/.codex/config.toml`. |
+| Other agents | none | Questions are shown as a numbered list, and you reply with a number or your own answer. |
+
+Open-ended questions, such as names, numbers or descriptions, are still asked as plain text. If Codex's tool is unavailable, the skill switches to numbered plain-text questions.
 
 ### What the final plan contains
 

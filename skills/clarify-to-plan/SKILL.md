@@ -18,7 +18,22 @@ Follow this sequence: **ask questions until the task is clear → ask whether th
 - Do not guess, silently select defaults, or treat common practice as the user's preference.
 - Do not build anything. The deliverable is a plan to paste into a new session.
 - Use the user's language and plain terms. Keep the question specific to their task.
-- Work without requiring a particular AI tool, plugin, repository, or other skill.
+- When the host provides a structured question tool, ask through it so the user can select an answer (see "How to ask"). Otherwise ask in plain text. Do not depend on any plugin, repository, or other skill.
+
+## How to ask
+
+Prefer the host's structured question tool whenever the question has a small set of distinct answers. The user then picks an option instead of typing. Both tools below also add a free-text "Other" choice automatically, so never add your own "Other" option.
+
+- **Claude Code:** call `AskUserQuestion`. Put one question in `questions`, with a `header` chip of up to 12 characters, a full `question` that ends with a question mark, and 2–4 `options`. Give each option a short `label` (1–5 words) and a `description` that explains the consequence of choosing it. Set `multiSelect: true` only when the user may choose several non-exclusive answers.
+- **Codex CLI:** call `request_user_input`. Put one question in `questions`, with a snake_case `id`, a `header` of up to 12 characters, a `question`, and 2–3 mutually exclusive `options`, each with a `label` and a `description`. The tool accepts one answer per question, so when several answers may apply, ask in plain text instead. The tool works only in Plan mode unless the user has enabled the `default_mode_request_user_input` feature. If it is unavailable or returns an error, do not retry it; ask in plain text for the rest of the session.
+- **Any other host, or when no tool is available:** ask in plain text. List the options as a numbered list, each with a one-line explanation, and say that the user may reply with a number or with their own answer.
+
+Rules for options:
+
+- Keep options neutral and mutually exclusive, and list them in an order that does not imply a preference. Do not mark an option as "Recommended" unless the user asked for your recommendation. Then mark only that one option, and treat the user's selection of it as their confirmation.
+- Cover the realistic answers. If the plausible answers do not fit in the tool's option limit, or if the answer is inherently free-form (for example a name, a number, a URL, a description, or pasted content), ask in plain text instead of forcing artificial options.
+- Record the selected option's meaning, plus any text the user adds in "Other" or notes, exactly as an answer they typed would be recorded. Selecting an option is an explicit choice. A tool timeout, dismissal, or empty answer is not a choice, so ask again or wait.
+- Calling the question tool satisfies the "questions only" rule. Do not add surrounding commentary to the call.
 
 ## 1. Understand the request and track decisions
 
@@ -53,9 +68,9 @@ Ask only about relevant gaps. Do not demand decisions about unrelated or inconse
 
 For an ambiguous answer, ask a narrower follow-up. For conflicting answers, ask which should govern. Do not resolve conflicts yourself.
 
-If the user is unsure, offer neutral choices inside a question, with brief explanations if needed, and allow another answer. If they explicitly ask for your recommendation, frame it as a proposed choice and ask them to confirm it. A recommendation is not a confirmed requirement.
+If the user is unsure, offer neutral choices as selectable options, with brief explanations, and allow another answer. If they explicitly ask for your recommendation, frame it as a proposed choice and ask them to confirm it. A recommendation is not a confirmed requirement.
 
-If the user says "you choose," ask them to confirm the concrete choice you propose before recording it as settled. Never turn delegation into an undisclosed assumption. If they explicitly defer a decision, record the deferral and require the implementing AI to ask before the affected work; do not fill it in yourself.
+If the user says "you choose," ask them to confirm the concrete choice you propose before recording it as settled. For example, offer it as an option to accept beside the alternatives. Never turn delegation into an undisclosed assumption. If they explicitly defer a decision, record the deferral and require the implementing AI to ask before the affected work; do not fill it in yourself.
 
 Do not turn an early "make the plan" into permission to guess unresolved requirements. Ask the remaining necessary questions first.
 
@@ -72,6 +87,8 @@ Before asking for readiness, check internally that:
 Then send only this question, adjusted to the user's language:
 
 **"Are you ready for me to write the final plan, or would you like to add or change any details first?"**
+
+When a question tool is available, ask it through the tool with two options: **"Write the final plan"** and **"Add or change details"**. The tool's free-text choice lets the user type the new details directly.
 
 Do not include a draft plan, a summary, or a separate document in that message. Ask this question even when the initial request already supplies all the details.
 
