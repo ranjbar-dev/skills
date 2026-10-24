@@ -97,7 +97,7 @@ AI agents often fill gaps with their own assumptions, such as a framework you di
 ### How it works
 
 1. **You give it an idea or task.**
-2. **It asks questions only**, and keeps going until the relevant details and choices are clear. There is no fixed question limit. By default it asks one focused question per turn. In Claude Code and Codex CLI you **select the answer** from a list of options, or pick "Other" to type your own (see [Selectable questions](#selectable-questions)).
+2. **It asks questions only**, and keeps going until the relevant details and choices are clear. There is no fixed question limit. By default it asks one focused question per turn. Each question starts with a progress counter such as `Q3/~12`, which shows the question number and the current estimate of the total. The estimate updates as your answers reveal more or fewer open points. In Claude Code and Codex CLI you **select the answer** from a list of options, or pick "Other" to type your own (see [Selectable questions](#selectable-questions)).
 3. **It doesn't fill gaps with guesses or defaults.** If it proposes a choice, or you say "you choose", you must confirm that choice before it counts.
 4. **It asks:** *"Are you ready for me to write the final plan, or would you like to add or change any details first?"*
 5. **If you aren't ready**, it collects your additional details and asks follow-up questions as needed.

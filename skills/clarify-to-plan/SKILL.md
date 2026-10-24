@@ -35,6 +35,16 @@ Rules for options:
 - Record the selected option's meaning, plus any text the user adds in "Other" or notes, exactly as an answer they typed would be recorded. Selecting an option is an explicit choice. A tool timeout, dismissal, or empty answer is not a choice, so ask again or wait.
 - Calling the question tool satisfies the "questions only" rule. Do not add surrounding commentary to the call.
 
+## Question counter
+
+Start every question with a progress counter in the form `Q<number>/~<estimated total>`, followed by a space, for example `Q3/~12 Which database should the app use?`. Put it at the start of the `question` text in `AskUserQuestion` and `request_user_input`, and at the start of plain-text questions. The counter is the only text allowed before the question.
+
+- `<number>` counts every question asked in this session, including this one, follow-ups, and readiness questions. It never resets.
+- `<estimated total>` is the number of questions asked so far plus your current estimate of the remaining consequential questions, including the readiness question. Re-estimate after every answer. Raise it when an answer opens new gaps and lower it when an answer settles several at once. Never show a total lower than the current number.
+- The `~` marks the total as an estimate. It is not a limit. Do not skip a necessary question, or stop early, to match the estimate.
+- When several questions are asked in one turn, give each its own number.
+- The readiness question shows the exact total without `~`, for example `Q12/12`. If the user then adds or changes details, continue numbering from there with a new estimate.
+
 ## 1. Understand the request and track decisions
 
 Read the task, relevant conversation, and any supplied material you can access before asking. Use existing answers instead of asking the user to repeat them. If needed context is unavailable, ask for it; never pretend to have read it.
